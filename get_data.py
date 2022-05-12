@@ -55,7 +55,7 @@ def select_cols_and_fix_types(df):
     return df
 
 
-def get_district_data(series_id):
+def get_data_official_api(series_id):
     try:
         df = pd.DataFrame()
         for id in series_id.keys():
@@ -64,7 +64,7 @@ def get_district_data(series_id):
             data = resp['month'][0]['date']
             col = pd.DataFrame.from_records(data)              # a column in the result df
             col['E'] = col['currBase'].apply(pd.Series).value
-            col['date'] =  col['month'].map(str) + '/' + col['year'].map(str)
+            col['date'] = col['month'].map(str) + '/' + col['year'].map(str)
             col = col[['date','E']]
             col = col.set_index('date')
             col.columns = [id]
@@ -85,12 +85,13 @@ def transform_df(df):
     df = df.reset_index()
     for index, row in df.iterrows():
         date = row['date']
-        #district = row['district']
         for item in row[1:].iteritems():
             dic = {'date':date, 'district':item[0], 'relative_price':item[1]}
             new_df = new_df.append(dic, ignore_index=True)
     new_df = new_df.set_index("date")
     return new_df
+
+
 
 #  ----- unofficial api
 """
@@ -103,8 +104,9 @@ df = select_cols_and_fix_types(df)
 # ---- using official api
 """
 series_id = {'jerusalem': '60000', 'north': '60100', 'haifa': '60200', 'center': '60300', 'tel_aviv': '60400', 'south': '60500'}
-df = get_district_data(series_id)
+df = get_data_official_api(series_id)
 df = transform_df(df)
 fig = px.line(df, y="relative_price", color='district')
 fig.show()
 """
+
