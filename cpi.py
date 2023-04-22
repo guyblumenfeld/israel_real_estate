@@ -47,21 +47,20 @@ def get_cpi(look_back_window=12):
     :param look_back_window: how many months to the past to compare to.
     :return:
     """
-    df = pd.read_excel("data\\cpi_from_the_website.xlsx", skiprows=22, index_col=None)
+    df = pd.read_excel("C:\\Users\\guybl\\Downloads\\file_71b7a8f4-f680-4c6f-9b9c-baad0d134ce3.xlsx", skiprows=22, index_col=None)
     df = rename_columns_cpi_df(df)
     df = transform_cpi_df(df)
     df = fix_dates(df)
     df['year_ago_monthly_index'] = df['index_value'].shift(look_back_window)
-    df['inflation'] = df.apply(
-        lambda x: 100 * (x['index_value'] - x['year_ago_monthly_index']) / x['year_ago_monthly_index'], axis=1)
+    df['inflation'] = df.apply(lambda x: 100 * (x['index_value'] - x['year_ago_monthly_index']) / x['year_ago_monthly_index'], axis=1)
+    df['inflation'] = df['inflation'].apply(lambda x: round(x, 1))
     df = df[['inflation']]
     df = df.dropna(how='any', axis=0)
+    df = df.reset_index().rename(columns={'dt':'date'})
+    df['date'] = df['date'].apply(lambda x: x.strftime('%m-%Y'))
     return df
 
 
-
-"""
-import plotly.express as px
-fig = px.line(df, y="y_over_y_inflation")
-fig.show()
-"""
+if __name__ == '__main__':
+    df = get_cpi()
+    print()
