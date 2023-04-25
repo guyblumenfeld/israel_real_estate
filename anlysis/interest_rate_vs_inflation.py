@@ -1,9 +1,7 @@
-from cpi import get_cpi
+from create_data.cpi import get_cpi
 import pandas as pd
 from datetime import datetime
 import matplotlib.pyplot as plt
-import seaborn as sns
-
 
 if __name__ == '__main__':
     df_cpi = get_cpi().reset_index()
