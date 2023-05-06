@@ -71,6 +71,8 @@ def create_data_by_codes(source_path, codes):
     df = flatten_data_by_codes(df=df, codes=codes)
     df = df.sort_values(by=['dt'], ascending=True)
     df = normalize(df)
+    df = df.applymap(lambda x: x-100 if x.name != 'dt' else x)
+
     df['dt_heb_label'] = df['dt'].apply(get_heb_date_label)
     return df
 
